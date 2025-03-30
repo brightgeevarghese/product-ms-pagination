@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,10 +54,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponseDto> searchProducts(int pageNo, int pageSize, String sortBy, String sortDirection) {
+
 //        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
 //        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, Sort.Direction.fromString(sortDirection), sortBy);
-        Page<Product> products = productRepository.findAll(pageRequest);
+        PageRequest pageRequest = PageRequest.of(
+                pageNo,  //Specifies which page of data to retrieve
+                pageSize,//Specifies how many items should be on that page.
+                Sort.Direction.fromString(sortDirection),// Specifies whether the data should be sorted in ascending or descending order
+                sortBy  //Specifies the field or property to sort by
+        );
+        Page<Product> products = productRepository.findAll(pageRequest.next());
         return products.map(product -> new ProductResponseDto(product.getName(), product.getPrice()));
     }
 }
